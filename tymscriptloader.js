@@ -124,6 +124,28 @@
         document.head.appendChild(el);
     }
 
+    var createImg = function(script) {
+        var el = document.createElement('img');
+        el.addEventListener('load', function() {
+            var imgs;
+            var forEach = Array.prototype.forEach;
+            // Todo: remove element, change data-src of "real" picture
+            onScriptLoad(script);
+            // Remove img tag
+            el.parentNode.removeChild(el);
+            // Set src attribute on imgs
+            imgs = document.querySelectorAll('img[data-src="' + script.source + '"]');
+            forEach.call(imgs, function(img) {
+                img.setAttribute('src', script.source);
+                img.removeAttribute('data-src');
+            });
+        });
+        el.src = script.source;
+        el.style.cssText = "display: none;";
+
+        document.head.appendChild(el);
+    }
+
     var loadScripts = function() {
         var noDependencyScripts = [];
         prepareLoad(noDependencyScripts);
@@ -132,6 +154,8 @@
                 createScript(scripts[noDependencyScripts[i]]);
             } else if (scripts[noDependencyScripts[i]].type === 'link') {
                 createLink(scripts[noDependencyScripts[i]]);
+            } else if (scripts[noDependencyScripts[i]].type === 'img') {
+                createImg(scripts[noDependencyScripts[i]]);
             }
         }
     };
