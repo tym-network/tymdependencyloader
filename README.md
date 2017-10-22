@@ -1,7 +1,7 @@
-Tym Script Loader
+Tym Dependency Loader
 ========================
 
-This JS Vanilla script is designed to load other JS scripts by handling dependencies. It lets you load an JS file only once one or a couple of other scripts are loaded.
+This JS Vanilla script is designed to load dependencies by creating "batch" of files to load. It lets you load a JS/CSS/Image file only once one or a couple of other files are loaded.
 
 1) How to use
 ----------------------------------

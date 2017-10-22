@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="author" content="Théotime Loiseau"/>
+    	<meta name="description" content="Tym Dependency Loader"/>
+        <meta name="viewport" content="initial-scale=1"/>
+        <title>Tym Dependency Loader</title>
+        <script src="../tymdependencyloader.js"></script>
+    </head>
+    <body>
+        <script>
+            (function() {
+                // Tym loader: a smart loader to get your assets on time
+                var scripts = {
+                    jquery: {
+                        source: 'http://code.jquery.com/jquery-1.11.0.min.js',
+                        type: 'js',
+                        groups: ['firstbatch']
+                    },
+                    tweenMax: {
+                        source: 'http://cdnjs.cloudflare.com/ajax/libs/gsap/1.14.1/TweenMax.min.js',
+                        type: 'js',
+                        groups: ['firstbatch']
+                    },
+                    timelineMax: {
+                        source: 'http://cdnjs.cloudflare.com/ajax/libs/gsap/1.14.1/TimelineMax.min.js',
+                        type: 'js',
+                        requires: ['firstbatch']
+                    },
+                    lodash: {
+                        source: 'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js',
+                        type: 'js',
+                        groups: ['timelineMax']
+                    },
+                    hogan: {
+                        source: 'http://cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js',
+                        type: 'js'
+                    },
+                    slick: {
+                        source: 'http://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.js',
+                        type: 'js',
+                        requires: ['jquery'],
+                        groups: ['firstbatch']
+                    }
+                };
+                window.tymDependencyLoader.listen('loaded', function (data) {
+                    console.log('loaded', data.asset);
+                });
+                window.tymDependencyLoader.listen('error', function () {
+                    console.log('error', data.asset);
+                });
+                window.tymDependencyLoader.listen('complete', function () {
+                    console.log('complete');
+                });
+                window.tymDependencyLoader(scripts);
+            }());
+        </script>
+    </body>
+</html>
