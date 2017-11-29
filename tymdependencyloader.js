@@ -218,7 +218,6 @@
     window.tymDependencyLoader.listen = function(event, cb) {
         if (supportedEvents.indexOf(event) >= 0) {
             callbacks[event].push(cb);
-            console.log('test', callbacks[event]);
         } else {
             console.warn('Event ' + event + ' not supported by tymDependencyLoader');
         }
