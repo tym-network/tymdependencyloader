@@ -161,7 +161,7 @@
 
         if (asset.options) {
             for (option in asset.options) {
-                el.setAttribute('option', asset.options[option]);
+                el.setAttribute(option, asset.options[option]);
             }
         }
 
