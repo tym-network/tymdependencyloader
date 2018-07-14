@@ -9,6 +9,7 @@
         <script src="../tymdependencyloader.js"></script>
     </head>
     <body>
+        <img class="test" data-picture="https://res.cloudinary.com/df0dmnqdf/image/upload/v1531254577/pictures/webp/pic13.jpg" />
         <script>
             (function() {
                 // Tym loader: a smart loader to get your assets on time
@@ -42,6 +43,17 @@
                         type: 'js',
                         requires: ['jquery'],
                         groups: ['firstbatch']
+                    },
+                    picture1: {
+                        source: 'https://res.cloudinary.com/df0dmnqdf/image/upload/v1531254577/pictures/webp/pic13.jpg',
+                        srcset: 'https://res.cloudinary.com/df0dmnqdf/image/upload/v1531254577/pictures/webp/pic13.jpg 650w, https://res.cloudinary.com/df0dmnqdf/image/upload/v1531254577/pictures/webp/pic13-3000.jpg 3000w',
+                        sources: [
+                            {
+                                type: 'image/webp',
+                                srcset: 'https://res.cloudinary.com/df0dmnqdf/image/upload/v1531254577/pictures/webp/pic13.webp 650w, https://res.cloudinary.com/df0dmnqdf/image/upload/v1531254577/pictures/webp/pic13-3000.webp 3000w'
+                            }
+                        ],
+                        type: 'picture',
                     }
                 };
                 window.tymDependencyLoader.listen('loaded', function (data) {

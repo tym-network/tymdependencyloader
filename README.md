@@ -40,6 +40,7 @@ This solution allows you to start loading your script faster as the code will be
                     }
                 };
                 window.tymScriptLoader(scripts);
+            }());
             </script>
         </body>
     </html>
@@ -80,6 +81,7 @@ This solution allows for a small HTML page but it will probably be a bit longer 
 
 ## Step 2: define your dependencies object
 The Tym Dependency Loader takes only one parameter: an object explaining the order of the files.
+
 This object should look like this:
 
     var scripts = {
@@ -101,6 +103,7 @@ This object should look like this:
     };
 
 The keys can be any string as long as they are unique.
+
 The allowed properties are
 
 | Property          |  Description                                                                                |

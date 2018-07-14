@@ -43,6 +43,8 @@
             createLink(asset);
         } else if (asset.type === 'img') {
             createImg(asset);
+        } else if (asset.type === 'picture') {
+            createPicture(asset);
         }
     }
 
@@ -171,7 +173,6 @@
         el.addEventListener('load', function() {
             var imgs;
             var forEach = Array.prototype.forEach;
-            // Todo: remove element, change data-src of "real" picture
             onAssetLoad(asset);
             // Remove img tag
             el.parentNode.removeChild(el);
@@ -188,7 +189,69 @@
         el.src = asset.source;
         el.style.cssText = "display: none;";
 
-        document.head.appendChild(el);
+        document.body.appendChild(el);
+    }
+
+    var onPictureLoad = function(asset, pictureEl) {
+        var imgs;
+        var forEach = Array.prototype.forEach;
+
+        onAssetLoad(asset);
+        // Replace img with picture elements
+        imgs = document.querySelectorAll('img[data-picture="' + asset.source + '"]');
+        forEach.call(imgs, function(img) {
+            var newPictureEl = pictureEl.cloneNode(true);
+            newPictureEl.removeChild(newPictureEl.querySelector('img'));
+            img.insertAdjacentElement('afterend', newPictureEl);
+            newPictureEl.appendChild(img);
+            img.setAttribute('src', asset.source);
+            if (asset.srcset) {
+                img.setAttribute('srcset', asset.srcset);
+            }
+            img.removeAttribute('data-picture');
+            newPictureEl.style.cssText = '';
+        });
+        // Remove picture tag
+        pictureEl.parentNode.removeChild(pictureEl);
+    };
+
+    var createPicture = function(asset) {
+        var pictureEl = document.createElement('picture');
+        var imgEl = document.createElement('img');
+        var imgElLoad = function() {
+            imgEl.removeEventListener('load', imgElLoad);
+            return onPictureLoad(asset, pictureEl);
+        };
+        var sourceEl;
+        imgEl.addEventListener('load', imgElLoad);
+        pictureEl.addEventListener('error', function() {
+            onAssetError(asset);
+        });
+
+        pictureEl.style.cssText = "display: none;";
+        if (asset.sources) {
+            asset.sources.forEach(function(source) {
+                sourceEl = document.createElement('source');
+                sourceEl.srcset = source.srcset;
+                if (source.type) {
+                    sourceEl.type = source.type;
+                }
+                if (source.media) {
+                    sourceEl.media = source.media;
+                }
+                if (source.sizes) {
+                    sourceEl.sizes = source.sizes;
+                }
+                pictureEl.appendChild(sourceEl);
+            });
+        }
+        imgEl.src = asset.source;
+        if (asset.srcset) {
+            imgEl.srcset = asset.srcset;
+        }
+        pictureEl.appendChild(imgEl);
+
+        document.body.appendChild(pictureEl);
     }
 
     var loadAssets = function() {
