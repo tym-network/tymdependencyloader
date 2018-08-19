@@ -136,10 +136,10 @@
 
     var createScript = function(asset) {
         var el = document.createElement('script');
-        el.addEventListener('load', function() {
+        el.addEventListener('load', function() {
             onAssetLoad(asset);
         });
-        el.addEventListener('error', function() {
+        el.addEventListener('error', function() {
             onAssetError(asset);
         });
         el.src = asset.source;
