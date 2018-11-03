@@ -121,7 +121,7 @@
         // It's not a group
         if (asset.id) {
             nbAssetsLoaded++;
-            fireEvent('loaded', { asset: asset });
+            fireEvent('loaded', asset);
         }
 
         if (nbAssetsLoaded === nbAssetsToLoad) {
