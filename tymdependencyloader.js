@@ -173,7 +173,6 @@
         el.addEventListener('load', function() {
             var imgs;
             var forEach = Array.prototype.forEach;
-            onAssetLoad(asset);
             // Remove img tag
             el.parentNode.removeChild(el);
             // Set src attribute on imgs
@@ -182,6 +181,7 @@
                 img.setAttribute('src', asset.source);
                 img.removeAttribute('data-src');
             });
+            onAssetLoad(asset);
         });
         el.addEventListener('error', function() {
             onAssetError(asset);
@@ -196,7 +196,6 @@
         var imgs;
         var forEach = Array.prototype.forEach;
 
-        onAssetLoad(asset);
         // Replace img with picture elements
         imgs = document.querySelectorAll('img[data-picture="' + asset.source + '"]');
         forEach.call(imgs, function(img) {
@@ -213,6 +212,7 @@
         });
         // Remove picture tag
         pictureEl.parentNode.removeChild(pictureEl);
+        onAssetLoad(asset);
     };
 
     var createPicture = function(asset) {
