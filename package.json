@@ -1,0 +1,22 @@
+{
+  "name": "tym-dependency-loader",
+  "version": "1.0.0",
+  "description": "A small utility to load HTML dependencies (like CSS files, images or JS files) and control when they are available",
+  "main": "tymdependencyloader.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tym-network/tymdependencyloader.git"
+  },
+  "author": "Théotime Loiseau",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tym-network/tymdependencyloader/issues"
+  },
+  "homepage": "https://github.com/tym-network/tymdependencyloader#readme"
+}
