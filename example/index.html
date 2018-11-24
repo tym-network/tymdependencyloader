@@ -56,16 +56,17 @@
                         type: 'picture',
                     }
                 };
-                window.tymDependencyLoader.listen('loaded', function (data) {
-                    console.log('loaded', data.asset);
+                var tdl = new TymDependencyLoader(scripts);
+                tdl.listen('loaded', function (data) {
+                    console.log('loaded', data);
                 });
-                window.tymDependencyLoader.listen('error', function () {
-                    console.log('error', data.asset);
+                tdl.listen('error', function () {
+                    console.log('error', data);
                 });
-                window.tymDependencyLoader.listen('complete', function () {
+                tdl.listen('complete', function () {
                     console.log('complete');
                 });
-                window.tymDependencyLoader(scripts);
+                tdl.load();
             }());
         </script>
     </body>

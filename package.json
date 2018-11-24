@@ -1,6 +1,6 @@
 {
   "name": "tym-dependency-loader",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A small utility to load HTML dependencies (like CSS files, images or JS files) and control when they are available",
   "main": "tymdependencyloader.js",
   "directories": {

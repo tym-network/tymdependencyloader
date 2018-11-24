@@ -18,8 +18,11 @@ This solution allows you to start loading your script faster as the code will be
         <head>[...]</head>
         <body>
             [...]
+
             <script>
             // Copy the minified tym dependency loader here
+
+            // Define your dependencies and start the loader
             (function() {
                 // Tym loader: a smart loader to get your assets on time
                 var scripts = {
@@ -39,7 +42,8 @@ This solution allows you to start loading your script faster as the code will be
                         requires: ['firstbatch']
                     }
                 };
-                window.tymScriptLoader(scripts);
+                var tdl = window.TymDependencyLoader(scripts);
+                tdl.load();
             }());
             </script>
         </body>
@@ -74,7 +78,8 @@ This solution allows for a small HTML page but it will probably be a bit longer 
                         requires: ['firstbatch']
                     }
                 };
-                window.tymDependencyLoader(scripts);
+                var tdl = window.TymDependencyLoader(scripts);
+                tdl.load();
             }())
             </script>
         </body>
@@ -118,9 +123,10 @@ The allowed properties are
 | sources           | *For pictures only* - An array of objects describing each source for the `<picture>` tag. Supported properties are `srcset`, `type`, `media` and `sizes`. The order of the table is preserved and will reflect the order of the `<source>` tag. |
 
 ## Step 3: call the script
-Once your dependencies object is correctly created, simple call the tymeDependencyLoader function as shown bellow
+Once your dependencies object is correctly created, simple create a tymDependencyLoader instance and call the load function as shown bellow
 
-    window.tymDependencyLoader(scripts);
+    var tdl = window.TymDependencyLoader(scripts);
+    tdl.load();
 
 # 2) Supported assets
 Different kind of assets can be loaded with TymDependencyLoader.
@@ -173,7 +179,8 @@ For example:
                         type: 'img'
                     }
                 };
-                window.tymDependencyLoader(dependencies);
+                var tdl = window.TymDependencyLoader(scripts);
+                tdl.load();
             }())
             </script>
         </body>
@@ -217,7 +224,8 @@ For example:
                         }]
                     }
                 };
-                window.tymDependencyLoader(dependencies);
+                var tdl = window.TymDependencyLoader(scripts);
+                tdl.load();
             }())
             </script>
         </body>
@@ -237,7 +245,8 @@ Note that we keep the original `<img>` tag, which means that all its attributes 
 TymDependencyLoader has an event system allowing developers to act at precise moments of the loading process.
 
 To listen to an event, do as follow:
-    window.tymDependencyLoader.listen('eventName', callback);
+    var tdl = window.TymDependencyLoader(assets);
+    tdl.listen('eventName', callback);
 Callback is a function receiving one or no argument, depending on the event. It will be called when the event fires.
 
 There are three events available: `loaded`, `error` and `complete`.

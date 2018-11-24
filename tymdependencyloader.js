@@ -15,19 +15,10 @@
  */
 
 (function() {
-    var assets = {};
-    var groups = {};
-    var nbAssetsToLoad = 0;
-    var nbAssetsLoaded = 0;
     var supportedEvents = ['loaded', 'error', 'complete'];
-    var callbacks = {
-        'loaded': [],
-        'error': [],
-        'complete': []
-    };
 
     var createGroup = function(groupName) {
-        groups[groupName] = {
+        this.groups[groupName] = {
             notifyOnLoad: [],
             loadedDependencies: [],
             members: []
@@ -35,16 +26,16 @@
     };
 
     var createAsset = function(asset) {
-        nbAssetsToLoad++;
+        this.nbAssetsToLoad++;
 
         if (asset.type === 'js') {
-            createScript(asset);
+            createScript.call(this, asset);
         } else if (asset.type === 'link') {
-            createLink(asset);
+            createLink.call(this, asset);
         } else if (asset.type === 'img') {
-            createImg(asset);
+            createImg.call(this, asset);
         } else if (asset.type === 'picture') {
-            createPicture(asset);
+            createPicture.call(this, asset);
         }
     }
 
@@ -52,40 +43,40 @@
         var requiredAssetId;
         var groupId;
 
-        for (var asset in assets) {
+        for (var asset in this.assets) {
             // Create props
-            assets[asset].id = asset;
-            assets[asset].notifyOnLoad = [];
-            assets[asset].loadedDependencies = [];
+            this.assets[asset].id = asset;
+            this.assets[asset].notifyOnLoad = [];
+            this.assets[asset].loadedDependencies = [];
 
-            if (!assets[asset].requires) {
+            if (!this.assets[asset].requires) {
                 // The script doesn't have dependencies
                 noDependencyAssets.push(asset);
             } else {
-                for (var require in assets[asset].requires) {
-                    requiredAssetId = assets[asset].requires[require];
-                    if (assets[requiredAssetId]) {
+                for (var require in this.assets[asset].requires) {
+                    requiredAssetId = this.assets[asset].requires[require];
+                    if (this.assets[requiredAssetId]) {
                         // It's a signe asset
-                        assets[requiredAssetId].notifyOnLoad.push(asset);
-                    } else if (groups[requiredAssetId]) {
+                        this.assets[requiredAssetId].notifyOnLoad.push(asset);
+                    } else if (this.groups[requiredAssetId]) {
                         // It's an existing group
-                        groups[requiredAssetId].notifyOnLoad.push(asset);
+                        this.groups[requiredAssetId].notifyOnLoad.push(asset);
                     } else {
                         // It's a new group
-                        createGroup(requiredAssetId);
-                        groups[requiredAssetId].notifyOnLoad.push(asset);
+                        createGroup.call(this, requiredAssetId);
+                        this.groups[requiredAssetId].notifyOnLoad.push(asset);
                     }
                 }
             }
 
             // If the script belongs to a group add script to group's members
-            if (assets[asset].groups) {
-                for (var group in assets[asset].groups) {
-                    groupId = assets[asset].groups[group];
-                    if (!groups[groupId]) {
-                        createGroup(groupId);
+            if (this.assets[asset].groups) {
+                for (var group in this.assets[asset].groups) {
+                    groupId = this.assets[asset].groups[group];
+                    if (!this.groups[groupId]) {
+                        createGroup.call(this, groupId);
                     }
-                    groups[groupId].members.push(asset);
+                    this.groups[groupId].members.push(asset);
                 }
             }
         }
@@ -98,11 +89,11 @@
         // Insert asset that requires it
         for (var toNotify in asset.notifyOnLoad) {
             toNotifyId = asset.notifyOnLoad[toNotify];
-            assets[toNotifyId].loadedDependencies.push(asset.id);
+            this.assets[toNotifyId].loadedDependencies.push(asset.id);
 
-            if (assets[toNotifyId].loadedDependencies.length === assets[toNotifyId].requires.length) {
+            if (this.assets[toNotifyId].loadedDependencies.length === this.assets[toNotifyId].requires.length) {
                 // All dependencies are loaded
-                createAsset(assets[toNotifyId]);
+                createAsset.call(this, this.assets[toNotifyId]);
             }
 
         }
@@ -110,37 +101,38 @@
         if (asset.groups) {
             for (var group in asset.groups) {
                 groupId = asset.groups[group];
-                groups[groupId].loadedDependencies.push(asset.id);
-                if (groups[groupId].loadedDependencies.length === groups[groupId].members.length) {
+                this.groups[groupId].loadedDependencies.push(asset.id);
+                if (this.groups[groupId].loadedDependencies.length === this.groups[groupId].members.length) {
                     // It's the last asset of the group, create dependencies
-                    onAssetLoad(groups[groupId]);
+                    onAssetLoad.call(this, this.groups[groupId]);
                 }
             }
         }
 
         // It's not a group
         if (asset.id) {
-            nbAssetsLoaded++;
-            fireEvent('loaded', asset);
+            this.nbAssetsLoaded++;
+            fireEvent.call(this, 'loaded', asset);
         }
 
-        if (nbAssetsLoaded === nbAssetsToLoad) {
+        if (this.nbAssetsLoaded === this.nbAssetsToLoad) {
             // We loaded all the listed assets
-            fireEvent('complete');
+            fireEvent.call(this, 'complete');
         }
     };
 
     var onAssetError = function(asset) {
-        fireEvent('error', asset);
+        fireEvent.call(this, 'error', asset);
     };
 
     var createScript = function(asset) {
+        var self = this;
         var el = document.createElement('script');
         el.addEventListener('load', function() {
-            onAssetLoad(asset);
+            onAssetLoad.call(self, asset);
         });
         el.addEventListener('error', function() {
-            onAssetError(asset);
+            onAssetError.call(self, asset);
         });
         el.src = asset.source;
 
@@ -148,12 +140,13 @@
     }
 
     var createLink = function(asset) {
+        var self = this;
         var el = document.createElement('link');
         el.addEventListener('load', function() {
-            onAssetLoad(asset);
+            onAssetLoad.call(self, asset);
         });
         el.addEventListener('error', function() {
-            onAssetError(asset);
+            onAssetError.call(self, asset);
         });
         el.href = asset.source;
         el.setAttribute('rel', 'stylesheet');
@@ -169,6 +162,7 @@
     }
 
     var createImg = function(asset) {
+        var self = this;
         var el = document.createElement('img');
         el.addEventListener('load', function() {
             var imgs;
@@ -181,10 +175,10 @@
                 img.setAttribute('src', asset.source);
                 img.removeAttribute('data-src');
             });
-            onAssetLoad(asset);
+            onAssetLoad.call(self, asset);
         });
         el.addEventListener('error', function() {
-            onAssetError(asset);
+            onAssetError.call(self, asset);
         });
         el.src = asset.source;
         el.style.cssText = "display: none;";
@@ -212,20 +206,21 @@
         });
         // Remove picture tag
         pictureEl.parentNode.removeChild(pictureEl);
-        onAssetLoad(asset);
+        onAssetLoad.call(this, asset);
     };
 
     var createPicture = function(asset) {
+        var self = this;
         var pictureEl = document.createElement('picture');
         var imgEl = document.createElement('img');
         var imgElLoad = function() {
             imgEl.removeEventListener('load', imgElLoad);
-            return onPictureLoad(asset, pictureEl);
+            return onPictureLoad.call(self, asset, pictureEl);
         };
         var sourceEl;
         imgEl.addEventListener('load', imgElLoad);
         pictureEl.addEventListener('error', function() {
-            onAssetError(asset);
+            onAssetError.call(self, asset);
         });
 
         pictureEl.style.cssText = "display: none;";
@@ -257,32 +252,49 @@
     var loadAssets = function() {
         // Array with all the assets that don't have any dependencies (= can be loaded immediatly)
         var noDependencyAssets = [];
-        prepareLoad(noDependencyAssets);
+        prepareLoad.call(this, noDependencyAssets);
         for (var i = 0, l = noDependencyAssets.length; i < l; i++) {
-            createAsset(assets[noDependencyAssets[i]]);
+            createAsset.call(this, this.assets[noDependencyAssets[i]]);
         }
     };
 
     var fireEvent = function(name, data) {
-        if (!callbacks[name] || callbacks[name].length === 0) {
+        if (!this.callbacks[name] || this.callbacks[name].length === 0) {
             return;
         }
-        for (var i = 0, l = callbacks[name].length; i < l; i++) {
-            callbacks[name][i](data);
+        for (var i = 0, l = this.callbacks[name].length; i < l; i++) {
+            this.callbacks[name][i](data);
         }
     };
 
-    window.tymDependencyLoader = function(a) {
-        // Deep clone
-        assets = JSON.parse(JSON.stringify(a));
+    var TymDependencyLoader = function(a) {
+        this.assets = {};
+        this.groups = {};
+        this.nbAssetsToLoad = 0;
+        this.nbAssetsLoaded = 0;
+        this.callbacks = {
+            'loaded': [],
+            'error': [],
+            'complete': []
+        };
 
-        loadAssets();
+        // Deep clone
+        this.assets = JSON.parse(JSON.stringify(a));
+
+        return this;
     };
-    window.tymDependencyLoader.listen = function(event, cb) {
+
+    TymDependencyLoader.prototype.listen = function(event, cb) {
         if (supportedEvents.indexOf(event) >= 0) {
-            callbacks[event].push(cb);
+            this.callbacks[event].push(cb);
         } else {
             console.warn('Event ' + event + ' not supported by tymDependencyLoader');
         }
     };
+
+    TymDependencyLoader.prototype.load = function() {
+        loadAssets.call(this);
+    };
+
+    window.TymDependencyLoader = TymDependencyLoader;
 })();
