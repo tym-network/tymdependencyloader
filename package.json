@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/tym-network/tymdependencyloader/issues"
   },
-  "homepage": "https://github.com/tym-network/tymdependencyloader#readme"
+  "homepage": "https://github.com/tym-network/tymdependencyloader#readme",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-uglify": "^3.0.1"
+  }
 }
