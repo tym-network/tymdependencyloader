@@ -42,7 +42,7 @@ This solution allows you to start loading your script faster as the code will be
                         requires: ['firstbatch']
                     }
                 };
-                var tdl = window.TymDependencyLoader(scripts);
+                var tdl = new window.TymDependencyLoader(scripts);
                 tdl.load();
             }());
             </script>
@@ -78,7 +78,7 @@ This solution allows for a small HTML page but it will probably be a bit longer 
                         requires: ['firstbatch']
                     }
                 };
-                var tdl = window.TymDependencyLoader(scripts);
+                var tdl = new window.TymDependencyLoader(scripts);
                 tdl.load();
             }())
             </script>
@@ -125,7 +125,7 @@ The allowed properties are
 ## Step 3: call the script
 Once your dependencies object is correctly created, simple create a tymDependencyLoader instance and call the load function as shown bellow
 
-    var tdl = window.TymDependencyLoader(scripts);
+    var tdl = new window.TymDependencyLoader(scripts);
     tdl.load();
 
 # 2) Supported assets
@@ -179,7 +179,7 @@ For example:
                         type: 'img'
                     }
                 };
-                var tdl = window.TymDependencyLoader(scripts);
+                var tdl = new window.TymDependencyLoader(scripts);
                 tdl.load();
             }())
             </script>
@@ -224,7 +224,7 @@ For example:
                         }]
                     }
                 };
-                var tdl = window.TymDependencyLoader(scripts);
+                var tdl = new window.TymDependencyLoader(scripts);
                 tdl.load();
             }())
             </script>
@@ -246,7 +246,7 @@ TymDependencyLoader has an event system allowing developers to act at precise mo
 
 To listen to an event, do as follow:
 
-    var tdl = window.TymDependencyLoader(assets);
+    var tdl = new window.TymDependencyLoader(assets);
     tdl.listen('eventName', callback);
     
 Callback is a function receiving one or no argument, depending on the event. It will be called when the event fires.
