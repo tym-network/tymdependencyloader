@@ -245,8 +245,10 @@ Note that we keep the original `<img>` tag, which means that all its attributes 
 TymDependencyLoader has an event system allowing developers to act at precise moments of the loading process.
 
 To listen to an event, do as follow:
+
     var tdl = window.TymDependencyLoader(assets);
     tdl.listen('eventName', callback);
+    
 Callback is a function receiving one or no argument, depending on the event. It will be called when the event fires.
 
 There are three events available: `loaded`, `error` and `complete`.
