@@ -253,7 +253,7 @@ Callback is a function receiving one or no argument, depending on the event. It 
 
 There are three events available: `loaded`, `error` and `complete`.
 
-`loaded` is fired when once dependency has been loaded. The callback receives the resource definition in argument.
+`loaded` is fired when once dependency has been loaded. The callback receives the resource definition in argument. Note that this event is also triggered for groups once all the assetsof the group have been successfully loaded. It will be called with an object as an argument where the 'id' is the name of the group and the 'type' is 'group'. 
 
 `error` is fired when once dependency failed to load. The callback receives the resource definition in argument.
 
