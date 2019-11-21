@@ -255,6 +255,12 @@
         // Array with all the assets that don't have any dependencies (= can be loaded immediatly)
         var noDependencyAssets = [];
         prepareLoad.call(this, noDependencyAssets);
+
+        if (noDependencyAssets.length === 0) {
+            console.warn('tymdependencyloader - All you assets have at least one "requires". At least one asset have to be loaded without dependency.');
+            return;
+        }
+
         for (var i = 0, l = noDependencyAssets.length; i < l; i++) {
             createAsset.call(this, this.assets[noDependencyAssets[i]]);
         }
