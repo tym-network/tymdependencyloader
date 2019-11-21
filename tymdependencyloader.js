@@ -19,6 +19,8 @@
 
     var createGroup = function(groupName) {
         this.groups[groupName] = {
+            id: groupName,
+            type: 'group',
             notifyOnLoad: [],
             loadedDependencies: [],
             members: []
@@ -56,7 +58,7 @@
                 for (var require in this.assets[asset].requires) {
                     requiredAssetId = this.assets[asset].requires[require];
                     if (this.assets[requiredAssetId]) {
-                        // It's a signe asset
+                        // It's a single asset
                         this.assets[requiredAssetId].notifyOnLoad.push(asset);
                     } else if (this.groups[requiredAssetId]) {
                         // It's an existing group
@@ -112,8 +114,8 @@
         // It's not a group
         if (asset.id) {
             this.nbAssetsLoaded++;
-            fireEvent.call(this, 'loaded', asset);
         }
+        fireEvent.call(this, 'loaded', asset);
 
         if (this.nbAssetsLoaded === this.nbAssetsToLoad) {
             // We loaded all the listed assets
