@@ -50,7 +50,9 @@
             this.assets[asset].id = asset;
             this.assets[asset].notifyOnLoad = [];
             this.assets[asset].loadedDependencies = [];
+        }
 
+        for (var asset in this.assets) {
             if (!this.assets[asset].requires) {
                 // The script doesn't have dependencies
                 noDependencyAssets.push(asset);
@@ -261,6 +263,11 @@
             return;
         }
 
+        if (checkForLoops(this.assets, this.groups)) {
+            console.warn('tymdependencyloader - You have a loop in your dependencies. Check your "requires".');
+            return;
+        }
+
         for (var i = 0, l = noDependencyAssets.length; i < l; i++) {
             createAsset.call(this, this.assets[noDependencyAssets[i]]);
         }
@@ -273,6 +280,79 @@
         for (var i = 0, l = this.callbacks[name].length; i < l; i++) {
             this.callbacks[name][i](data);
         }
+    };
+
+    // Using the Tarjan Strongly Connected Components algorithm, check if there is a loop in the dependency graph
+    var checkForLoops = function(assets, groups) {
+        // Clone array to prevent new props
+        var assetsCopy = JSON.parse(JSON.stringify(assets));
+        var groupsCopy = JSON.parse(JSON.stringify(groups));
+        var index = 0;
+        var stack = [];
+
+        var tarjanStronglyConnectedComponents = function(asset) {
+            var lastAssetStack,
+                stronglyConnectedComponents = [],
+                group, spliceArgs;
+
+            asset.index = index;
+            asset.lowlink = index;
+            index++;
+            stack.push(asset);
+            asset.onStack = true;
+
+            if (asset.requires) {
+                // Groups have to be replaced by the list of assets
+                for (var i = 0, l = asset.requires.length; i < l; i++) {
+                    group = groupsCopy[asset.requires[i]];
+                    if (group) {
+                        spliceArgs = group.members;
+                        spliceArgs.unshift(i, 1);
+                        Array.prototype.splice.apply(asset.requires, spliceArgs)
+                        i =+ group.members.length - 1;
+                    }
+                }
+
+                for (var i = 0, l = asset.requires.length; i < l; i++) {
+                    var r = assetsCopy[asset.requires[i]];
+
+                    if (typeof r.index === 'undefined') {
+                        if (tarjanStronglyConnectedComponents(r)) {
+                            return true;
+                        }
+                        asset.lowlink = Math.min(asset.lowlink, r.lowlink);
+                    } else if (r.onStack) {
+                        asset.lowlink = Math.min(asset.lowlink, r.index);
+                    }
+                }
+            }
+
+            if (asset.lowlink === asset.index) {
+                do {
+                    lastAssetStack = stack.pop();
+                    lastAssetStack.onStack = false;
+                    stronglyConnectedComponents.push(lastAssetStack);
+                } while (asset != lastAssetStack);
+
+                // Strongly connected components of 1 item are not considered loops here
+                if (stronglyConnectedComponents.length > 1) {
+                    return true;
+                }
+            }
+
+            return false
+        }; 
+        
+        for (var asset in assetsCopy) {
+            var a = assetsCopy[asset];
+            if (typeof a.index === 'undefined') {
+                if (tarjanStronglyConnectedComponents(a)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     };
 
     var TymDependencyLoader = function(a) {
