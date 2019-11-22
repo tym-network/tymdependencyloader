@@ -112,7 +112,7 @@
         }
 
         // It's not a group
-        if (asset.id) {
+        if (asset.id && asset.type !== 'group') {
             this.nbAssetsLoaded++;
         }
         fireEvent.call(this, 'loaded', asset);
