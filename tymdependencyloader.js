@@ -197,19 +197,16 @@
         // Replace img with picture elements
         imgs = document.querySelectorAll('img[data-picture="' + asset.source + '"]');
         forEach.call(imgs, function(img) {
-            var newPictureEl = pictureEl.cloneNode(true);
-            newPictureEl.removeChild(newPictureEl.querySelector('img'));
-            img.insertAdjacentElement('afterend', newPictureEl);
-            newPictureEl.appendChild(img);
-            img.setAttribute('src', asset.source);
-            if (asset.srcset) {
-                img.setAttribute('srcset', asset.srcset);
-            }
+            var pictureImg = pictureEl.querySelector('img');
+            img.insertAdjacentElement('afterend', pictureEl);
             img.removeAttribute('data-picture');
-            newPictureEl.style.cssText = '';
+            img.getAttributeNames().forEach(function(attributeName) {
+                pictureImg.setAttribute(attributeName, img.getAttribute(attributeName));
+            });
+            pictureEl.style.cssText = '';
+            // Remove img tag
+            img.parentNode.removeChild(img);
         });
-        // Remove picture tag
-        pictureEl.parentNode.removeChild(pictureEl);
         onAssetLoad.call(this, asset);
     };
 
